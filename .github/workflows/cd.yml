@@ -17,9 +17,24 @@ jobs:
           username: ubuntu
           key:      ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd ~/devops-project
-            git pull origin main
-            cp .env.production .env
+            # If directory doesn't exist, clone the repository
+            if [ ! -d "$HOME/devops-project" ]; then
+              git clone https://github.com/zainabbashirlaghari-code/devops-project-2212276.git $HOME/devops-project
+            fi
+            cd $HOME/devops-project
+            
+            # Perform a hard reset to discard any local modifications and fetch fresh main branch changes
+            git fetch origin main
+            git reset --hard origin/main
+            
+            # Ensure an environment configuration file exists
+            if [ -f ".env.production" ]; then
+              cp .env.production .env
+            elif [ ! -f ".env" ]; then
+              cp .env.example .env
+            fi
+            
+            # Rebuild and start production services
             docker compose -f docker-compose.prod.yml down
             docker compose -f docker-compose.prod.yml up -d --build
             echo "Deployed at $(date)"

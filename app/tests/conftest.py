@@ -11,10 +11,13 @@ from app.main import app
 from app.database import Base
 from app.main import get_db
 
-# Use SQLite for local test runs; CI overrides with PostgreSQL
-TEST_DB_URL = "sqlite:///./test.db"
+import os
 
-engine = create_engine(TEST_DB_URL, connect_args={"check_same_thread": False})
+# Use SQLite for local test runs; CI overrides with PostgreSQL
+TEST_DB_URL = os.getenv("DATABASE_URL", "sqlite:///./test.db")
+
+connect_args = {"check_same_thread": False} if TEST_DB_URL.startswith("sqlite") else {}
+engine = create_engine(TEST_DB_URL, connect_args=connect_args)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
