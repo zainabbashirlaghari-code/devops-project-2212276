@@ -1,5 +1,5 @@
 # 2212276 — DevOps Final Project
-hi
+hi and bye
 > **Student:** 2212276
 > **Course:** DevOps Fundamentals
 > **Live URL:** http://YOUR_EC2_IP:8000
